@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Autowired
 	private EmployeeRepository employeeRepository;
 
+	@Autowired
+	private ModelMapper modelMapper;
+
 	@Override
 	public CommonResponse<EmployeeResponse> recordSave(EmployeeRequest employeeRequest) {
 		log.info("calling recordSave method present in EmployeeServiceImpl {}", employeeRequest);
@@ -34,15 +38,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 		CommonResponse<EmployeeResponse> commonResponse = null;
 		try {
 			employee = new Employee();
-			employee.setName(employeeRequest.getName());
-			employee.setEmail(employeeRequest.getEmail());
-			employee.setPhone(employeeRequest.getPhone());
-			employee.setCountry(employeeRequest.getCountry());
-			employee.setAddress(employeeRequest.getAddress());
-			employee.setTerm(employeeRequest.getTerm());
-			employee.setDob(employeeRequest.getDob());
-			employee.setGender(employeeRequest.getGender());
-			employee.setIs_Active(employeeRequest.getIs_Active());
+			employee = this.modelMapper.map(employeeRequest,Employee.class);
+//			employee.setName(employeeRequest.getName());
+//			employee.setEmail(employeeRequest.getEmail());
+//			employee.setPhone(employeeRequest.getPhone());
+//			employee.setCountry(employeeRequest.getCountry());
+//			employee.setAddress(employeeRequest.getAddress());
+//			employee.setTerm(employeeRequest.getTerm());
+//			employee.setDob(employeeRequest.getDob());
+//			employee.setGender(employeeRequest.getGender());
+//			employee.setIs_Active(employeeRequest.getIs_Active());
 			employee = employeeRepository.save(employee);
 
 		} catch (Exception exception) {
@@ -67,16 +72,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 		if (!employeeList.isEmpty()) {
 			for (Employee employee : employeeList) {
 				EmpResponse employeeResponse = new EmpResponse();
-				employeeResponse.setId(employee.getId());
-				employeeResponse.setName(employee.getName());
-				employeeResponse.setEmail(employee.getEmail());
-				employeeResponse.setPhone(employee.getPhone());
-				employeeResponse.setCountry(employee.getCountry());
-				employeeResponse.setAddress(employee.getAddress());
-				employeeResponse.setTerm(employee.getTerm());
-				employeeResponse.setDob(employee.getDob());
-				employeeResponse.setGender(employee.getGender());
-				employeeResponse.setIs_Active(employee.getIs_Active().toString());
+				employeeResponse = this.modelMapper.map(employee,EmpResponse.class);
+//				employeeResponse.setId(employee.getId());
+//				employeeResponse.setName(employee.getName());
+//				employeeResponse.setEmail(employee.getEmail());
+//				employeeResponse.setPhone(employee.getPhone());
+//				employeeResponse.setCountry(employee.getCountry());
+//				employeeResponse.setAddress(employee.getAddress());
+//				employeeResponse.setTerm(employee.getTerm());
+//				employeeResponse.setDob(employee.getDob());
+//				employeeResponse.setGender(employee.getGender());
+//				employeeResponse.setIs_Active(employee.getIs_Active().toString());
 				listEmpResponse.add(employeeResponse);
 
 			}
@@ -118,18 +124,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 		Optional<Employee> optEmployee = employeeRepository.findById(id);
 		if (optEmployee.isPresent()) {
 			Employee employee = optEmployee.get();
-
 			empResponse = new EmpResponse();
-			empResponse.setId(employee.getId());
-			empResponse.setName(employee.getName());
-			empResponse.setEmail(employee.getEmail());
-			empResponse.setPhone(employee.getPhone());
-			empResponse.setCountry(employee.getCountry());
-			empResponse.setAddress(employee.getAddress());
-			empResponse.setTerm(employee.getTerm());
-			empResponse.setDob(employee.getDob());
-			empResponse.setGender(employee.getGender());
-			empResponse.setIs_Active(employee.getIs_Active().toString());
+			empResponse = this.modelMapper.map(employee,EmpResponse.class);
+//			empResponse.setId(employee.getId());
+//			empResponse.setName(employee.getName());
+//			empResponse.setEmail(employee.getEmail());
+//			empResponse.setPhone(employee.getPhone());
+//			empResponse.setCountry(employee.getCountry());
+//			empResponse.setAddress(employee.getAddress());
+//			empResponse.setTerm(employee.getTerm());
+//			empResponse.setDob(employee.getDob());
+//			empResponse.setGender(employee.getGender());
+//			empResponse.setIs_Active(employee.getIs_Active().toString());
 			return empResponse;
 
 		}
@@ -140,12 +146,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public CommonResponse<EmployeeResponse> recordUpdate(Long id, EmployeeRequest employeeRequest) {
 		log.info("calling recordUpdate() method present in EmployeeServiceImpl");
-		Employee employee=null;
+		Employee employee = null;
 		EmployeeResponse employeeResponse = null;
 		CommonResponse<EmployeeResponse> commonResponse = null;
 		Optional<Employee> optEmployee = employeeRepository.findById(id);
-		if(optEmployee.isPresent())
-		{
+		if (optEmployee.isPresent()) {
 			employee = optEmployee.get();
 			employee.setName(employeeRequest.getName());
 			employee.setEmail(employeeRequest.getEmail());
@@ -157,11 +162,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 			employee.setGender(employeeRequest.getGender());
 			employee.setIs_Active(employeeRequest.getIs_Active());
 			employee = employeeRepository.save(employee);
-		}
-		else {
-			
+		} else {
+
 			System.out.println("employee not found");
-			
+
 		}
 		employeeResponse = new EmployeeResponse();
 		employeeResponse.setEmployee(employee);
@@ -180,8 +184,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		EmployeeResponse employeeResponse = null;
 		CommonResponse<EmployeeResponse> commonResponse = null;
 		Optional<Employee> optEmployee = employeeRepository.findById(id);
-		if(optEmployee.isPresent())
-		{
+		if (optEmployee.isPresent()) {
 			employeeRepository.deleteById(id);
 			employeeResponse = new EmployeeResponse();
 			commonResponse = new CommonResponse<EmployeeResponse>();
@@ -189,16 +192,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 			commonResponse.setMessage("Delete Record Successfully");
 			commonResponse.setStatus(HttpStatus.OK.value());
 			commonResponse.setData(employeeResponse);
-			
 
-		
-		}
-		else {
+		} else {
 			System.out.println("Record not found");
 		}
-		
+
 		return commonResponse;
 
-}
-	
+	}
+
 }
