@@ -2,6 +2,8 @@ package com.config;
 
 import java.io.IOException;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -41,5 +43,9 @@ public class RestCORSInterceptor implements Filter {
 
 	@Override
 	public void destroy() {
+	}
+	@Bean
+	public ModelMapper getModelMapper() {
+		return new ModelMapper();
 	}
 }
